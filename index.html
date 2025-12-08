@@ -71,13 +71,14 @@
 
     <!-- CSP (Optimized & Safe) -->
     <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https:;
-        img-src 'self' data: https:;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com;
-        font-src https://fonts.gstatic.com https://cdn.jsdelivr.net data:;
-        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
-        connect-src 'self' https:;
+            default-src 'self' https:;
+            img-src 'self' data: https:;
+            style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com;
+            font-src https://fonts.gstatic.com https://cdn.jsdelivr.net data:;
+            script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
+            connect-src 'self' https: http://localhost:8000;
     " />
+
 
     <!-- Schema -->
     <script type="application/ld+json">
@@ -94,15 +95,70 @@
       ]
     }
     </script>
+
+    <style>
+        #applyModal .modal-content {
+            border-radius: 12px;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+    
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+    
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    
+        #applyForm input,
+        #applyForm textarea {
+            border-radius: 8px;
+            padding: 10px;
+        }
+    
+        #applyForm input:focus,
+        #applyForm textarea:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 4px rgba(13, 110, 253, 0.3);
+        }
+        .error-input {
+        border-color: red !important;
+        animation: shake 0.2s ease-in-out 0s 2;
+    }
+
+    @keyframes shake {
+        0% { margin-left: 0px; }
+        25% { margin-left: -5px; }
+        50% { margin-left: 5px; }
+        75% { margin-left: -5px; }
+        100% { margin-left: 0px; }
+    }
+
+    #applyModal .modal-content {
+        border-radius: 12px;
+        animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+    </style>
+
 </head>
 
 
 <body>
 
     <!-- NAVBAR -->
+    <!-- ===================== NAVBAR START ===================== -->
     <nav class="navbar navbar-expand-lg fixed-top bg-white py-3 shadow-sm" id="mainNav">
         <div class="container">
-
+    
             <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
                 <img src="logo-company name.png" width="40" height="40" class="me-2" alt="Gen Aspira Logo" />
                 <span class="logo-text">
@@ -110,12 +166,12 @@
                     <span class="aspira-text">Aspira Ed</span>
                 </span>
             </a>
-
+    
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+    
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
@@ -123,15 +179,93 @@
                     <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
                     <li class="nav-item"><a class="nav-link" href="#mentorsSection">Mentors</a></li>
                     <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+    
+                    <!-- UPDATED APPLY NOW BUTTON -->
                     <li class="nav-item">
-                        <a href="https://forms.microsoft.com/r/LzKMHNTAJi" class="btn btn-primary ms-2"
-                            target="_blank">Apply Now</a>
+                        <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#applyModal">
+                            Apply Now
+                        </button>
                     </li>
                 </ul>
             </div>
-
+    
         </div>
     </nav>
+    
+    <!-- ===================== APPLY FORM MODAL START ===================== -->
+     <div class="modal fade" id="applyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+    
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Apply Now</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+    
+                <div class="modal-body">
+                    <form id="applyForm">
+    
+                        <!-- NAME -->
+                        <div class="mb-3">
+                            <input type="text" id="name" class="form-control" placeholder="Full Name" required oninput="filterNameInput(this)">
+                            <small id="nameError" class="text-danger d-none">Please enter a valid name.</small>
+                        </div>
+    
+                        <!-- EMAIL -->
+                        <div class="mb-3">
+                            <input type="email" id="email" class="form-control" placeholder="Email" required oninput="filterEmailInput(this)">
+                            <small id="emailError" class="text-danger d-none">Enter a valid email address.</small>
+                        </div>
+
+    
+                        <!-- PHONE -->
+                        <div class="mb-3">
+                            <input type="tel" id="phone" class="form-control" placeholder="Phone Number" maxlength="10" required
+                                oninput="filterPhoneInput(this)">
+                            <small id="phoneError" class="text-danger d-none">Enter a valid 10-digit phone number.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="text" id="qualification" class="form-control" placeholder="Qualification" required
+                                oninput="filterQualificationInput(this)">
+                            <small id="qualificationError" class="text-danger d-none">Please enter a valid qualification.</small>
+                        </div>
+
+    
+                        <!-- MESSAGE -->
+                        <textarea id="message" class="form-control mb-3" placeholder="Message (Optional)"></textarea>
+    
+                        <!-- SUBMIT BUTTON -->
+                        <button type="submit" id="submitBtn" class="btn btn-primary w-100">
+                            Submit
+                        </button>
+    
+                    </form>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===================== SUCCESS TOAST ===================== -->
+    <div id="successToast" style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+            z-index: 5000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+         ">
+        ✓ Done — Submitted Successfully
+    </div>
+    
+    <!-- ===================== APPLY FORM MODAL END ===================== -->
+
 
     <!-- HERO SECTION -->
     <section id="hero" class="hero-section">
@@ -162,7 +296,7 @@
 
                     <div class="price-card">
                         <i class="bi bi-currency-rupee"></i>
-                        <strong>22,999</strong>
+                        <strong>29,999</strong>
                         <span class="tag">All-Inclusive</span>
                     </div>
 
@@ -298,7 +432,7 @@
 
             <!-- CTA -->
             <div class="text-center mt-5">
-                <a href="#courses" class="btn main-cta px-4 py-2 me-2">Apply Now</a>
+                <a href="#courses" class="btn main-cta px-4 py-2 me-2 btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#applyModal">Apply Now</a>
                 <a href="#curriculum" class="btn secondary-cta px-4 py-2">View Curriculum</a>
             </div>
 
@@ -732,7 +866,8 @@
                             <li>No prior coding or technical background needed</li>
                             <li>Beginner-friendly, IIIT-inspired hands-on teaching</li>
                             <li>Learn by building — no theory-heavy approach</li>
-                            <li>Complete program under <strong>₹22,999</strong> with projects</li>
+                            <li>Your entire learning journey from foundational knowledge to polished project execution is bundled into one clear-cut
+                            price point: ₹29,999.</li>
                         </ul>
                     </div>
                 </div>
@@ -935,7 +1070,7 @@
                     <div class="mentor-dynamic-imgbox">
                         <img src="Fouder pic.jpg" alt="Founder & CEO" class="mentor-dynamic-img" />
                         <div class="mentor-dynamic-overlay">
-                            <h4 class="mentor-dynamic-role">Founder & CEO</h4>
+                            <h4 class="mentor-dynamic-role">CEO</h4>
                             <p class="mentor-dynamic-bio">
                                 Amruthapuri Reddi Rani is an RGUKT (AP IIIT) alumna and Ex-Infosys engineer with hands-on
                                 experience in Generative AI. She leads Gen Aspira’s mission of delivering practical,
@@ -952,7 +1087,7 @@
                     <div class="mentor-dynamic-imgbox">
                         <img src="python-mentor.jpg" alt="Python Mentor" class="mentor-dynamic-img" />
                         <div class="mentor-dynamic-overlay">
-                            <h4 class="mentor-dynamic-role">Python Mentor</h4>
+                            <h4 class="mentor-dynamic-role">Python Instructor & Ops Lead</h4>
                             <p class="mentor-dynamic-bio">
                                 Monish is a full-stack engineer with 5+ years of experience in Python, backend APIs,
                                 and scalable application development. He has mentored learners across EdTech platforms
@@ -987,7 +1122,7 @@
                     <div class="mentor-dynamic-imgbox">
                         <img src="kavins.webp" alt="AI Mentor" class="mentor-dynamic-img" />
                         <div class="mentor-dynamic-overlay">
-                            <h4 class="mentor-dynamic-role">AI & Innovation</h4>
+                            <h4 class="mentor-dynamic-role">AI & Innovation Specialist</h4>
                             <p class="mentor-dynamic-bio">
                                 Kavin S is a Lead AI Engineer in a global consulting firm with 6+ years of experience
                                 building enterprise-grade Gen-AI systems. He specializes in LLMs, RAG pipelines,
@@ -1102,7 +1237,7 @@
     
             <!-- CTA -->
             <div class="text-center mt-5">
-                <a href="#courses" class="btn main-cta px-4 py-2 me-2">Apply Now</a>
+                <a href="#courses" class="btn main-cta px-4 py-2 me-2 btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#applyModal">Apply Now</a>
                 <a href="#curriculum" class="btn secondary-cta px-4 py-2">View Curriculum</a>
             </div>
     
@@ -1335,6 +1470,11 @@
             }
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Form submit JS (backend integration comes next) -->
+    <script src="form-submit.js"></script>
 
     <script>
         document.getElementById("fillFormBtn").onclick = () =>
