@@ -2336,3 +2336,12 @@ footer hr {
         font-size: 1.15rem;
     }
 }
+
+.footer-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
